@@ -1,14 +1,16 @@
-FROM node:23-alpine
+FROM node:23-alpine AS build-stage
 
-ENV PORT=3000
+WORKDIR /app
 
-WORKDIR /cconnect
-COPY . /cconnect
+COPY package.json .
+
+RUN npm install
+
+COPY . .
+
 RUN npm run build
-EXPOSE ${PORT}
-CMD ["npm", "start"]
 
-FROM nginx:1.22.1-alpine as prod-stage
-COPY --from=build-stage /app/build /usr/share/nginx/html
+FROM nginx:1.22.1-alpine AS prod-stage
+COPY --from=build-stage /app/dist /usr/share/nginx/html
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
