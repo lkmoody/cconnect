@@ -10,5 +10,3 @@ phases:
   post_build:
     commands:
       - aws s3 cp --recursive ./dist s3://www.constituent-connect.com/
-      - aws cloudfront create-invalidation --distribution-id E3LDD6BFIH8W9O --path /\*
-      - aws cloudfront create-invalidation --distribution-id E2899LLU33G2W0 --path /\*
