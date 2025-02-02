@@ -11,9 +11,9 @@ import { theme } from '../themes/main.js'
 
 function App() {
     return (
-        <Contexts>
-            <ThemeProvider theme={theme}>
-                <Dashboard>
+        //<Contexts>
+        //     <ThemeProvider theme={theme}>
+        //         <Dashboard>
                     <Routes>
                         <Route path={'/'} element={<HomePage/>}/>
                         <Route path={'/login'} element={<LoginPage/>}/>
@@ -22,9 +22,9 @@ function App() {
                             <Route path={'/secret2'} element={<Secret2/>}/>
                         </Route>
                     </Routes>
-                </Dashboard>
-            </ThemeProvider>
-        </Contexts>
+            //     </Dashboard>
+            // </ThemeProvider>
+        //</Contexts>
     )
 }
 
