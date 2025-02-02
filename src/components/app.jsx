@@ -4,25 +4,25 @@ import {LoginPage} from "./login-page.jsx";
 import {Secret} from "./secret.jsx";
 import {ProtectedRoutes} from '../routes/protected-routes.jsx'
 import {Secret2} from "./secret2.jsx";
-import {Dashboard} from "./dashboard/dashboard.jsx";
 import {Contexts} from "../contexts/contexts.jsx";
 import {ThemeProvider} from "@mui/material";
-import { theme } from '../themes/main.js'
+import {theme} from '../themes/main.js'
+import {PublicRoutes} from "../routes/public-routes.jsx";
 
 function App() {
     return (
         <Contexts>
             <ThemeProvider theme={theme}>
-                <Dashboard>
-                    <Routes>
+                <Routes>
+                    <Route element={<PublicRoutes/>}>
                         <Route path={'/'} element={<HomePage/>}/>
                         <Route path={'/login'} element={<LoginPage/>}/>
-                        <Route element={<ProtectedRoutes/>}>
-                            <Route path={'/secret'} element={<Secret/>}/>
-                            <Route path={'/secret2'} element={<Secret2/>}/>
-                        </Route>
-                    </Routes>
-                </Dashboard>
+                    </Route>
+                    <Route element={<ProtectedRoutes/>}>
+                        <Route path={'/secret'} element={<Secret/>}/>
+                        <Route path={'/secret2'} element={<Secret2/>}/>
+                    </Route>
+                </Routes>
             </ThemeProvider>
         </Contexts>
     )

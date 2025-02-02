@@ -16,7 +16,7 @@ export const TopBanner = () => {
     }
 
     return (
-        <AppBar position='relative' sx={{zIndex: theme.zIndex.drawer + 1}} component='nav'>
+        <AppBar elevation={0} position='relative' sx={{zIndex: theme.zIndex.drawer + 1}} component='nav'>
             <Toolbar sx={{height: theme.dashboard.topBanner.height, display: 'flex', justifyContent: 'space-between'}}>
                 <Box sx={{display: 'flex', alignItems: 'center'}}>
                     <Button

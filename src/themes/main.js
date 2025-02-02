@@ -39,7 +39,7 @@ export const theme = createTheme({
             height: 80
         },
         sideNav: {
-            width: 100
+            width: 224
         }
     }
 });

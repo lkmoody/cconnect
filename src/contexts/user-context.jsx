@@ -3,13 +3,38 @@ import {useAuth} from './cognito-auth-context.jsx'
 
 const UserContext = createContext({})
 
-export const UserProvider = ({ children }) => {
-    const { isInitialized, user } = useAuth()
+export const UserProvider = ({children}) => {
+    const {isInitialized, user, isAuthenticated, logout} = useAuth()
     const [currentUser, setCurrentUser] = useState(null)
+
+    const getUserViews = useCallback(() => {
+        if (isAuthenticated) {
+            return [
+                {
+                    id: 'secret',
+                    name: 'Secret',
+                    path: '/secret'
+                },
+                {
+                    id: 'secret2',
+                    name: 'Secret 2',
+                    path: '/secret2'
+                }
+            ]
+        } else {
+            return [
+                {
+                    id: 'login',
+                    name: 'Login',
+                    path: '/login'
+                }
+            ]
+        }
+    })
 
     const loadUserDetails = useCallback(async () => {
         // Load details from db here
-        if(user) {
+        if (user) {
             //Get name and stuff from database
             setCurrentUser({
                 name: 'Larry'
@@ -19,15 +44,20 @@ export const UserProvider = ({ children }) => {
                 name: 'Guest'
             })
         }
-    }, [])
+    }, [user])
 
     useEffect(() => {
-        if(isInitialized) {
+        if (isInitialized) {
             loadUserDetails()
         }
     }, [isInitialized])
 
-    return <UserContext.Provider value={{ currentUser }}>{children}</UserContext.Provider>
+    return <UserContext.Provider value={{
+        currentUser,
+        getUserViews
+    }}>
+        {children}
+    </UserContext.Provider>
 }
 
 export const useCurrentUser = () => {
