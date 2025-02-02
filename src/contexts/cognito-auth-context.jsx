@@ -1,9 +1,8 @@
-import PropTypes from "prop-types";
-import { createContext, useCallback, useEffect, useReducer } from "react";
-import { CognitoUser, CognitoUserPool, AuthenticationDetails } from "amazon-cognito-identity-js";
+import {createContext, useCallback, useContext, useEffect, useReducer} from "react";
+import {CognitoUser, CognitoUserPool, AuthenticationDetails} from "amazon-cognito-identity-js";
 import axios from "axios";
-import { PATH_AUTH } from "../routes/paths.js";
-import { cognitoConfig } from "../configurations/cognito-config.js";
+import {PATH_AUTH} from "../routes/paths.js";
+import {cognitoConfig} from "../configurations/cognito-config.js";
 
 export const UserPool = new CognitoUserPool({
     UserPoolId: cognitoConfig.userPoolId,
@@ -18,7 +17,7 @@ const initialState = {
 
 const handlers = {
     AUTHENTICATE: (state, action) => {
-        const { isAuthenticated, user } = action.payload;
+        const {isAuthenticated, user} = action.payload;
 
         return {
             ...state,
@@ -44,11 +43,7 @@ const CognitoAuthContext = createContext({
     logout: () => Promise.resolve()
 });
 
-CognitoAuthProvider.propTypes = {
-    children: PropTypes.node
-};
-
-function CognitoAuthProvider({ children }) {
+export const CognitoAuthProvider = ({children}) => {
     const [state, dispatch] = useReducer(reducer, initialState);
 
     const getUserAttributes = useCallback(
@@ -85,12 +80,12 @@ function CognitoAuthProvider({ children }) {
                             axios.defaults.headers.common.Authorization = token;
                             dispatch({
                                 type: 'AUTHENTICATE',
-                                payload: { isAuthenticated: true, user: attributes }
+                                payload: {isAuthenticated: true, user: attributes}
                             });
                             resolve({
                                 user,
                                 session,
-                                headers: { Authorization: token }
+                                headers: {Authorization: token}
                             });
                         }
                     });
@@ -122,8 +117,8 @@ function CognitoAuthProvider({ children }) {
     }, [getSession]);
 
     useEffect(() => {
-        initial();
-    }, [initial]);
+        initial()
+    }, [initial])
 
     // We make sure to handle the user update here, but return the resolve value in order for our components to be
     // able to chain additional `.then()` logic. Additionally, we `.catch` the error and "enhance it" by providing
@@ -151,7 +146,7 @@ function CognitoAuthProvider({ children }) {
                     },
                     newPasswordRequired: () => {
                         // Handle this on login page for update password.
-                        resolve({ message: 'newPasswordRequired' });
+                        resolve({message: 'newPasswordRequired'});
                     }
                 });
             }),
@@ -162,8 +157,9 @@ function CognitoAuthProvider({ children }) {
     const logout = () => {
         const user = UserPool.getCurrentUser();
         if (user) {
-            user.signOut();
-            dispatch({ type: 'LOGOUT' });
+            user.signOut()
+            dispatch({type: 'LOGOUT'})
+            window.location.href = '/login'
         }
     };
 
@@ -173,8 +169,8 @@ function CognitoAuthProvider({ children }) {
                 email,
                 password,
                 [
-                    { Name: 'email', Value: email },
-                    { Name: 'name', Value: `${firstName} ${lastName}` }
+                    {Name: 'email', Value: email},
+                    {Name: 'name', Value: `${firstName} ${lastName}`}
                 ],
                 null,
                 async (err) => {
@@ -188,18 +184,15 @@ function CognitoAuthProvider({ children }) {
             )
         );
 
-    const resetPassword = () => { };
+    const resetPassword = () => {
+    };
 
     return (
         <CognitoAuthContext.Provider
             value={{
                 ...state,
                 method: 'cognito',
-                user: {
-                    displayName: state?.user?.name || 'Minimals',
-                    role: 'admin',
-                    ...state.user
-                },
+                user: state.user,
                 login,
                 register,
                 logout,
@@ -211,6 +204,8 @@ function CognitoAuthProvider({ children }) {
     );
 }
 
-export { CognitoAuthContext, CognitoAuthProvider };
+export const useAuth = () => {
+    return useContext(CognitoAuthContext)
+}
 
 
