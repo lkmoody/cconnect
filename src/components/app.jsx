@@ -1,10 +1,10 @@
 import {Route, Routes} from "react-router-dom";
 import {HomePage} from "./home-page.jsx";
 import {LoginPage} from "./login-page.jsx";
-import {Secret} from "./Secret.jsx";
+import {Secret} from "./secret.jsx";
 import {ProtectedRoutes} from '../routes/protected-routes.jsx'
-import {Secret2} from "./Secret2.jsx";
-import {Dashboard} from "./dashboard/Dashboard.jsx";
+import {Secret2} from "./secret2.jsx";
+import {Dashboard} from "./dashboard/dashboard.jsx";
 import {Contexts} from "../contexts/contexts.jsx";
 import {ThemeProvider} from "@mui/material";
 import { theme } from '../themes/main.js'
