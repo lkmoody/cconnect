@@ -4,26 +4,22 @@ import {TopBanner} from "./top-banner.jsx";
 import {SideNav} from "./side-nav.jsx";
 
 export const Dashboard = ({navLinks, children}) => {
-    const {currentUser} = useCurrentUser()
     const theme = useTheme()
 
-    if (!currentUser) {
-        return <CircularProgress size={20}/>
-    } else {
-        return (
-            <>
-                <TopBanner/>
-                <SideNav navLinks={navLinks}/>
-                <Box
-                    sx={{
-                        position: 'absolute',
-                        top: theme.dashboard.topBanner.height,
-                        left: theme.dashboard.sideNav.width
-                    }}
-                >
-                    <Container>{children}</Container>
-                </Box>
-            </>
-        )
-    }
+
+    return (
+        <>
+            <TopBanner/>
+            <SideNav navLinks={navLinks}/>
+            <Box
+                sx={{
+                    position: 'absolute',
+                    top: theme.dashboard.topBanner.height,
+                    left: theme.dashboard.sideNav.width
+                }}
+            >
+                <Container>{children}</Container>
+            </Box>
+        </>
+    )
 }
