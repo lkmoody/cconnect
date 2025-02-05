@@ -24,13 +24,11 @@ export const LoginPage = () => {
                 setLoginError(null)
                 setLoginErrorMessage('')
                 const result = await login(userName, password)
-                console.log('result', result)
                 if(result?.message === 'newPasswordRequired') {
                     setNewPasswordRequired(true)
                 }
             } catch (error) {
                 setLoginError(error)
-                console.log('error message', error.message)
                 if (error.message.includes('Incorrect username or password.')) {
                     setLoginErrorMessage(t('loginForm.incorrectLoginInfo'))
                 }
@@ -53,7 +51,7 @@ export const LoginPage = () => {
             if (location?.state?.redirectTo) {
                 navigate(location?.state?.redirectTo, {replace: true, state: {redirectTo: null}})
             } else {
-                navigate('/')
+                navigate('/my-home')
             }
         }
     }, [isAuthenticated])

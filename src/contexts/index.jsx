@@ -5,7 +5,6 @@ import {UserViewProvider} from "./user-view-context.jsx";
 import {CurrentUserProvider} from "./current-user-context.jsx";
 
 const ContextProvider = ({children}) => {
-    console.log(theme)
     return (
         <ThemeProvider theme={theme}>
             {children}

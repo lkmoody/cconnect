@@ -29,9 +29,6 @@ export const theme = createTheme({
         grey: {
             main: '#3F3F3F',
             light: '#EEEEEE'
-        },
-        twitter: {
-            main: '#1DA1F2'
         }
     },
     dashboard: {

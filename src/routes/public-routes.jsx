@@ -1,12 +1,12 @@
 import {Outlet} from "react-router-dom";
-import {PublicDashboard} from "../components/dashboard/public-dashboard.jsx";
+import {Dashboard} from "../components/dashboard/dashboard.jsx";
 
 export const PublicRoutes = () => {
     return (
-        <PublicDashboard
+        <Dashboard
             navLinks={[]}
         >
             <Outlet/>
-        </PublicDashboard>
+        </Dashboard>
     )
 }

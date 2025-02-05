@@ -1,9 +1,10 @@
-import {AppBar, Avatar, Box, Button, Toolbar, Typography, useTheme} from "@mui/material";
+import {AppBar, Avatar, Box, Button, IconButton, Toolbar, Typography, useTheme} from "@mui/material";
 import {useState} from "react";
 import {ProfileMenu} from "./profile-menu.jsx";
 import {useAuth} from "../../contexts/cognito-auth-context.jsx";
+import {Menu} from "@mui/icons-material";
 
-export const TopBanner = () => {
+export const TopBanner = ({toggleDrawer, smUp}) => {
     const {isAuthenticated} = useAuth()
     const [anchorEl, setAnchorEl] = useState(null)
     const theme = useTheme()
@@ -17,7 +18,14 @@ export const TopBanner = () => {
 
     return (
         <AppBar elevation={0} position='relative' sx={{zIndex: theme.zIndex.drawer + 1}} component='nav'>
-            <Toolbar sx={{height: theme.dashboard.topBanner.height, display: 'flex', justifyContent: 'space-between'}}>
+            <Toolbar sx={{height: theme.dashboard.topBanner.height, display: 'flex'}}>
+                {smUp &&
+                    <IconButton
+                        onClick={toggleDrawer}
+                    >
+                        <Menu fontSize="small" sx={{color: 'white'}}/>
+                    </IconButton>
+                }
                 <Box sx={{display: 'flex', alignItems: 'center'}}>
                     <Button
                         href='/'

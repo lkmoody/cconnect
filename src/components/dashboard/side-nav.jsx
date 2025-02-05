@@ -1,7 +1,8 @@
-import {Box, Drawer, Link, MenuItem, MenuList, Typography, useTheme} from "@mui/material"
+import {Box, Drawer, Link, MenuItem, MenuList, Typography, useMediaQuery, useTheme} from "@mui/material"
 import {useLocation} from "react-router-dom";
+import {useEffect, useState} from "react";
 
-export const SideNav = ({navLinks}) => {
+export const SideNav = ({navLinks, open, toggleOpen, smUp}) => {
     const theme = useTheme()
     const location = useLocation()
 
@@ -13,9 +14,10 @@ export const SideNav = ({navLinks}) => {
                     width: theme.dashboard.sideNav.width
                 }
             }}
-            variant={'permanent'}
+            variant={smUp ? 'temporary': 'permanent'}
             anchor={'left'}
-            open={true}
+            open={smUp ? open : true}
+            onClose={toggleOpen}
         >
             <Box
                 sx={{

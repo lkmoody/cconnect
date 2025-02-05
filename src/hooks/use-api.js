@@ -1,6 +1,7 @@
 import axios from "axios"
-import { useCallback } from "react"
+import {useCallback, useState} from "react"
 import {useAuth} from "../contexts/cognito-auth-context.jsx";
+import {useNavigate} from "react-router-dom";
 
 const instance = axios.create({
     baseURL: import.meta.env.VITE_BASE_URL + '/api/v1'
@@ -13,15 +14,29 @@ const GET = 'get',
 //PUT = 'put'
 
 export const useApi = () => {
-    const { getIdToken } = useAuth()
+    const [isLoading, setIsLoading] = useState(false)
+    const navigate = useNavigate()
+
+
+    const { getSession } = useAuth()
     const makeCall = useCallback(
         async (config) => {
+            setIsLoading(true)
             try {
-                const token = await getIdToken()
+                const session = await getSession()
+                console.log(session)
+                const token = session.idToken.jwtToken
                 const requestConfig = { ...config, headers: { Authorization: `Bearer ${token}` } }
                 const { data } = await instance.request(requestConfig)
                 return data
+            } catch(error) {
+                if(error.response?.status === 401) {
+                    navigate('/logout')
+                } else {
+                    throw error
+                }
             } finally {
+                setIsLoading(false)
             }
         }, [])
 
@@ -54,6 +69,7 @@ export const useApi = () => {
     }
 
     return {
+        isLoading,
         api: {
             getTest: () => doGet('/test'),
         }

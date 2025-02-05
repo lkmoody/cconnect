@@ -1,8 +1,8 @@
 import {createContext, useCallback, useContext, useEffect, useReducer} from "react"
 import {CognitoUser, CognitoUserPool, AuthenticationDetails} from "amazon-cognito-identity-js"
-import axios from "axios"
 import {PATH_AUTH} from "../routes/paths.js"
 import {cognitoConfig} from "../configurations/cognito-config.js"
+import useLocalStorage from "use-local-storage";
 
 export const UserPool = new CognitoUserPool({
     UserPoolId: cognitoConfig.userPoolId,
@@ -48,6 +48,7 @@ const CognitoAuthContext = createContext({
 
 export const CognitoAuthProvider = ({children}) => {
     const [state, dispatch] = useReducer(reducer, initialState)
+    const [storedSession, setStoredSession] = useLocalStorage('session', {})
 
     const getUserAttributes = useCallback(
         (currentUser) =>
@@ -69,27 +70,22 @@ export const CognitoAuthProvider = ({children}) => {
     )
 
     const getSession = useCallback(
-        () =>
+        async () =>
             new Promise((resolve, reject) => {
+                if(Date.now() - storedSession?.time >= 3300) {
+                    resolve(storedSession)
+                }
                 const user = UserPool.getCurrentUser()
                 if (user) {
                     user.getSession(async (err, session) => {
                         if (err) {
                             reject(err)
                         } else {
-                            const attributes = await getUserAttributes(user)
-                            const token = session.getIdToken().getJwtToken()
-                            // use the token or Bearer depend on the wait BE handle, by default amplify API only need to token.
-                            axios.defaults.headers.common.Authorization = token
                             dispatch({
                                 type: 'AUTHENTICATE',
-                                payload: {isAuthenticated: true, user, token}
+                                payload: {isAuthenticated: true, user}
                             })
-                            resolve({
-                                user,
-                                session,
-                                headers: {Authorization: token}
-                            })
+                            resolve({...session, time: Date.now()})
                         }
                     })
                 } else {
@@ -129,7 +125,7 @@ export const CognitoAuthProvider = ({children}) => {
     // able to chain additional `.then()` logic. Additionally, we `.catch` the error and "enhance it" by providing
     // a message that our React components can use.
     const login = useCallback(
-        (email, password, newPassword = null) =>
+        async (email, password, newPassword = null) =>
             new Promise((resolve, reject) => {
                 const user = new CognitoUser({
                     Username: email,
@@ -142,8 +138,10 @@ export const CognitoAuthProvider = ({children}) => {
                 })
 
                 user.authenticateUser(authDetails, {
-                    onSuccess: (data) => {
-                        getSession()
+                    onSuccess: async (data) => {
+                        const session = await getSession()
+
+                        setStoredSession(session)
                         resolve(data)
                     },
                     onFailure: (err) => {
@@ -152,8 +150,9 @@ export const CognitoAuthProvider = ({children}) => {
                     newPasswordRequired: (userAttributes, requiredAttributes) => {
                         if(newPassword) {
                             user.completeNewPasswordChallenge(newPassword, requiredAttributes, {
-                                onSuccess: (data) => {
-                                    getSession()
+                                onSuccess: async (data) => {
+                                    const session = await getSession()
+                                    setStoredSession(session)
                                     resolve(data)
                                 },
                                 onFailure: (error) => {console.log(error)}
@@ -172,8 +171,8 @@ export const CognitoAuthProvider = ({children}) => {
         const user = UserPool.getCurrentUser()
         if (user) {
             user.signOut()
+            setStoredSession({})
             dispatch({type: 'LOGOUT'})
-            window.location.href = '/login'
         }
     }
 
@@ -202,20 +201,11 @@ export const CognitoAuthProvider = ({children}) => {
         return login(email, oldPassword, newPassword)
     }
 
-    const getIdToken = () => {
-        const user = UserPool.getCurrentUser()
-        if(user) {
-            user.getSession(async (err, session) => {
-                if (err) {
-                    reject(err)
-                } else {
-                    const token = session.getIdToken().getJwtToken()
-
-                    resolve(token)
-                }
-            })
-        }
-    }
+    const getIdToken = useCallback(() => {
+        new Promise((resolve, reject) => {
+            const user = UserPool.getCurrentUser()
+        })
+    },[])
 
     return (
         <CognitoAuthContext.Provider
@@ -227,7 +217,7 @@ export const CognitoAuthProvider = ({children}) => {
                 register,
                 logout,
                 resetPassword,
-                getIdToken
+                getSession
             }}
         >
             {children}

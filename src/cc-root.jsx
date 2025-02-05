@@ -5,12 +5,11 @@ import {BrowserRouter, Outlet, Route, Routes} from "react-router-dom";
 import {HomePage} from "./components/home-page.jsx";
 import {LoginPage} from "./components/login-page.jsx";
 import {Secret} from "./components/secret.jsx";
-import {Secret2} from "./components/secret2.jsx";
-import {Dashboard} from "./components/dashboard/dashboard.jsx";
 import {LogoutPage} from "./components/dashboard/logout-page.jsx";
 import {ProtectedRoutes} from "./routes/protected-routes.jsx";
 import {PublicRoutes} from "./routes/public-routes.jsx";
 import {useTranslation} from "react-i18next";
+import {SubscriberHome} from "./components/subscriber-home.jsx";
 
 function handleRedirectCallback(appState) {
     //Redirect stuff here
@@ -26,7 +25,7 @@ const CcRoutes = () => {
                     <Route path={'/'} element={<HomePage/>}/>
                 </Route>
                 <Route element={<ProtectedRoutes/>}>
-                    <Route path={'/secret'} element={<Secret/>}/>
+                    <Route path={'/my-home'} element={<SubscriberHome/>}/>
                 </Route>
             </Route>
         </Routes>
@@ -43,7 +42,6 @@ const DashboardRoot = () => {
 
 const CcRoot = () => {
     const { t } = useTranslation()
-    console.log(t('app_name'))
     return (
         <Suspense fallback={<CircularProgress/>}>
             <BrowserRouter>

@@ -1,31 +1,48 @@
-import { useAuth } from '../contexts/cognito-auth-context.jsx'
-import {Button, Container, FormControl, Typography} from "@mui/material";
+import {Box, CircularProgress, Container, Typography} from "@mui/material";
 import {useEffect, useState} from "react";
 import {useApi} from "../hooks/use-api.js";
 
 export const Secret = () => {
     const [secret, setSecret] = useState(null)
-    const auth = useAuth();
-    const { api } = useApi();
-
-    const handleLogout = async () => {
-        await auth.logout()
-    }
+    const {api, isLoading} = useApi();
+    const [windowHeight, setWindowHeight] = useState(window.innerHeight)
 
     const fetchSecret = async () => {
-        const data = await api.getTest()
-        setSecret(data)
+        if (!isLoading) {
+            try {
+                const data = await api.getTest()
+                setSecret(data)
+            } catch (error) {
+                setSecret('Jenkins')
+                console.error(error)
+            }
+        }
     }
 
     useEffect(() => {
-        if(!secret){
+        if (!secret) {
             fetchSecret()
         }
     })
 
+    if (!secret) {
+        return (
+            <Box
+                sx={{
+                    display: 'flex',
+                    width: '100%',
+                    height: windowHeight,
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}
+            >
+                <CircularProgress/>
+            </Box>
+        )
+    }
     return (
         <Container>
-            Hello
+            <Typography>{`Hello ${secret}`}</Typography>
         </Container>
     );
 };
