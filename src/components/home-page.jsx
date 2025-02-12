@@ -1,24 +1,10 @@
 import {useLocation} from "react-router-dom";
 import {useApi} from "../hooks/use-api.js";
 import {useEffect, useState} from "react";
+import {Image} from "@mui/icons-material";
 
 export const HomePage = () => {
-    // const [done, setDone] = useState(false);
-    // const { api } = useApi()
-    //
-    // const fetchTest = async () => {
-    //     const result = api.getTest()
-    //     setDone(true)
-    // }
-    //
-    // useEffect(() => {
-    //     if(!done) {
-    //         fetchTest()
-    //     }
-    // }, []);
  return (
-     <div>
-         <h1>This is the Home Page</h1>
-     </div>
+     <img alt='Constituent Connect' src='/images/constituent-connect-temp-logo.png' />
  )
 }
