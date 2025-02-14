@@ -71,7 +71,7 @@ export const useApi = () => {
     return {
         isLoading,
         api: {
-            getTest: () => doGet('/test'),
+            getCurrentUser: () => doGet('/current-user'),
         }
     }
 }

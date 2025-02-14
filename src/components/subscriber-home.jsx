@@ -3,19 +3,25 @@ import {useApi} from "../hooks/use-api.js";
 import {useEffect, useState} from "react";
 
 export const SubscriberHome = () => {
-    // const [done, setDone] = useState(false);
-    // const { api } = useApi()
-    //
-    // const fetchTest = async () => {
-    //     const result = api.getTest()
-    //     setDone(true)
-    // }
-    //
-    // useEffect(() => {
-    //     if(!done) {
-    //         fetchTest()
-    //     }
-    // }, []);
+    const [queryResult, setQueryResult] = useState(null);
+    const { api } = useApi()
+
+    const fetchCurrentUser = async () => {
+        console.log(import.meta.env.VITE_REACT_APP_CLIENT_ID)
+        console.log(import.meta.env.VITE_REACT_APP_USER_POOL_ID)
+        console.log(import.meta.env.VITE_BASE_URL)
+        console.log(import.meta.env.VITE_ENV)
+
+        const result = await api.getCurrentUser()
+        console.log(result)
+        setQueryResult(true)
+    }
+
+    useEffect(() => {
+        if(!queryResult) {
+            fetchCurrentUser()
+        }
+    }, []);
     return (
         <div>
             <h1>This is the Subscriber Home Page</h1>
