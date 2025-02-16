@@ -7,8 +7,6 @@ export const SubscriberHome = () => {
     const { api } = useApi()
 
     const fetchCurrentUser = async () => {
-        console.log(import.meta.env.VITE_REACT_APP_CLIENT_ID)
-        console.log(import.meta.env.VITE_REACT_APP_USER_POOL_ID)
         console.log(import.meta.env.VITE_BASE_URL)
         console.log(import.meta.env.VITE_ENV)
 
