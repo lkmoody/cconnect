@@ -22,7 +22,7 @@ export const SubscriberHome = () => {
     }, []);
     return (
         <div>
-            <h1>This is the Subscriber Home Page</h1>
+            <h1>This is the Subscriber Home Page!</h1>
         </div>
     )
 }
