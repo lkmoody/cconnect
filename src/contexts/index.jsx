@@ -15,11 +15,11 @@ const ContextProvider = ({children}) => {
 const DashboardContextProvider = ({children, onRedirectCallback}) => {
     return (
         <CognitoAuthProvider>
-            <UserViewProvider>
-                <CurrentUserProvider>
+            <CurrentUserProvider>
+                <UserViewProvider>
                     {children}
-                </CurrentUserProvider>
-            </UserViewProvider>
+                </UserViewProvider>
+            </CurrentUserProvider>
         </CognitoAuthProvider>
     )
 }

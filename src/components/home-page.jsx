@@ -5,6 +5,6 @@ import {Image} from "@mui/icons-material";
 
 export const HomePage = () => {
  return (
-     <img alt='Constituent Connect' src='/images/constituent-connect-temp-logo.png' />
+     <>Home Page</>
  )
 }

@@ -24,7 +24,7 @@ export const useApi = () => {
             setIsLoading(true)
             try {
                 const session = await getSession()
-                console.log(session)
+                //console.log(session)
                 const token = session.idToken.jwtToken
                 const requestConfig = { ...config, headers: { Authorization: `Bearer ${token}` } }
                 const { data } = await instance.request(requestConfig)

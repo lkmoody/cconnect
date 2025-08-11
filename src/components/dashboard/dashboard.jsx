@@ -1,5 +1,4 @@
-import {useCurrentUser} from '../../contexts/user-context.jsx'
-import {Box, CircularProgress, Container, useMediaQuery, useTheme} from "@mui/material";
+import {Box, Container, useMediaQuery, useTheme} from "@mui/material";
 import {TopBanner} from "./top-banner.jsx";
 import {SideNav} from "./side-nav.jsx";
 import {useState} from "react";
@@ -18,7 +17,7 @@ export const Dashboard = ({navLinks, children}) => {
     return (
         <>
             <TopBanner toggleDrawer={handleToggleDrawer} smUp={smUp} />
-            <SideNav open={sideNavOpen} navLinks={navLinks} smUp={smUp} />
+            {/*<SideNav open={sideNavOpen} navLinks={navLinks} smUp={smUp} />*/}
             <Box
                 sx={{
                     position: 'absolute',
