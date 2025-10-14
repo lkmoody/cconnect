@@ -27,7 +27,6 @@ export const UserViewProvider = ({children}) => {
 
     console.log('User views:', userViews)
     console.log('Current user:', currentUser)
-    console.log("Test")
 
     if (userViews === null) {
         return <LargeSpinner/>
