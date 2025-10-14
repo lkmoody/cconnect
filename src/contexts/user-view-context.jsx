@@ -10,17 +10,29 @@ export const UserViewProvider = ({children}) => {
     const [userViews, setUserViews] = useState(null)
 
     function getUserViews() {
+        setUserViews(null)
+        let navLinks = []
+        navLinks.push(
+            {id: 'home', path: '/', name: 'Home'}
+        )
         if (currentUser.roles.includes("internal")) {
-            const navLinks = [{id: 'internal', path: '/internal', name: 'Internal'}]
-            setUserViews({navLinks})
-        } else {
-            const navLinks = [{id: 'home', path: '/', name: 'Home'}]
-            setUserViews({navLinks})
+            navLinks.push(
+                {id: 'internal', path: '/internal', name: 'Internal'}
+            )
+        } else if (currentUser.roles.includes("elected")) {
+            navLinks.push(
+                {id: 'elected', path: '/elected', name: 'Elected'},
+                {id: 'profile', path: '/profile', name: 'Profile'},
+            )
         }
+
+        setUserViews({navLinks})
+
     }
 
+    // If the currentUser changes due to an auth change then the views will be updated
     useEffect(() => {
-        if (currentUser && !userViews) {
+        if (currentUser) {
             getUserViews()
         }
     }, [currentUser])
@@ -28,9 +40,9 @@ export const UserViewProvider = ({children}) => {
     console.log('User views:', userViews)
     console.log('Current user:', currentUser)
 
-    if (userViews === null) {
-        return <LargeSpinner/>
-    }
+    // if (userViews === null) {
+    //     return <LargeSpinner/>
+    // }
 
     return (
         <UserViewContext.Provider value={userViews}>

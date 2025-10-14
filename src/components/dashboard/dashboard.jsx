@@ -1,7 +1,7 @@
 import {Box, CircularProgress, Container, useMediaQuery, useTheme} from "@mui/material";
 import {TopBanner} from "./top-banner.jsx";
 import {SideNav} from "./side-nav.jsx";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useView} from "../../contexts/user-view-context.jsx";
 import {Outlet} from "react-router-dom";
 import {LargeSpinner} from "../common/large-spinner.jsx";

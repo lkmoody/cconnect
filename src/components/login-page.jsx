@@ -51,7 +51,7 @@ export const LoginPage = () => {
             if (location?.state?.redirectTo) {
                 navigate(location?.state?.redirectTo, {replace: true, state: {redirectTo: null}})
             } else {
-                navigate('/internal')
+                navigate('/')
             }
         }
     }, [isAuthenticated])
