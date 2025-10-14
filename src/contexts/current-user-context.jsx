@@ -1,60 +1,48 @@
 import {createContext, useCallback, useContext, useEffect, useState} from "react";
 import {useAuth} from "./cognito-auth-context.jsx";
 import {useApi} from "../hooks/use-api.js";
+import {ErrorPage} from "../components/common/error-page.jsx";
 
 const CurrentUserContext = createContext(null);
 export const useCurrentUser = () => useContext(CurrentUserContext);
 
 export const CurrentUserProvider = ({children}) => {
-    const { api } = useApi()
+    const {api} = useApi()
     const {isInitialized, user, isAuthenticated, logout} = useAuth()
     const [currentUser, setCurrentUser] = useState(null)
-
-    const getUserViews = useCallback(() => {
-        if (isAuthenticated) {
-            return [
-                {
-                    id: 'secret',
-                    name: 'Secret',
-                    path: '/secret'
-                },
-                {
-                    id: 'secret2',
-                    name: 'Secret 2',
-                    path: '/secret2'
-                }
-            ]
-        } else {
-            return [
-                {
-                    id: 'login',
-                    name: 'Login',
-                    path: '/login'
-                }
-            ]
-        }
-    })
+    const [errorGettingUser, setErrorGettingUser] = useState(null)
 
     const loadUserDetails = useCallback(async () => {
-        // Load details from db here
-        if (user) {
-            //Get name and stuff from database
-            const result = await api.getCurrentUser()
-            setCurrentUser(result)
-        } else {
-            setCurrentUser({})
+        try {
+            //throw 'This is an error'
+            // Load details from db here
+            if (user) {
+                //Get name and stuff from database
+                const result = await api.getCurrentUser()
+                setCurrentUser(result)
+            } else {
+                setCurrentUser({roles: ['guest']})
+            }
+        } catch (error) {
+            setErrorGettingUser(error)
         }
-    }, [user])
+    }, [api, user])
 
     useEffect(() => {
-        if (isInitialized && !currentUser) {
+        if (isInitialized && !currentUser && !errorGettingUser) {
             loadUserDetails()
         }
-    }, [isInitialized])
+    }, [isInitialized, currentUser, errorGettingUser])
 
-    return (
-        <CurrentUserContext.Provider value={{currentUser, setCurrentUser}}>
-            {children}
-        </CurrentUserContext.Provider>
-    )
+    if(errorGettingUser) {
+        return (
+            <ErrorPage message={errorGettingUser} />
+        )
+    } else {
+        return (
+            <CurrentUserContext.Provider value={{currentUser, setCurrentUser}}>
+                {children}
+            </CurrentUserContext.Provider>
+        )
+    }
 }

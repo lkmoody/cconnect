@@ -6,10 +6,9 @@ import {HomePage} from "./components/home-page.jsx";
 import {LoginPage} from "./components/login-page.jsx";
 import {LogoutPage} from "./components/dashboard/logout-page.jsx";
 import {ProtectedRoutes} from "./routes/protected-routes.jsx";
-import {PublicRoutes} from "./routes/public-routes.jsx";
 import {useTranslation} from "react-i18next";
-import {SubscriberHome} from "./components/subscriber-home.jsx";
 import {Dashboard} from "./components/dashboard/dashboard.jsx";
+import {InternalHome} from "./components/internal/internal-home.js";
 
 function handleRedirectCallback(appState) {
     //Redirect stuff here
@@ -18,15 +17,13 @@ function handleRedirectCallback(appState) {
 const CcRoutes = () => {
     return (
         <Routes>
-            <Route path={'/'} element={<DashboardRoot/>}>
+            <Route element={<DashboardRoot/>}>
                 <Route path={'/login'} element={<LoginPage/>}/>
                 <Route path={'/logout'} element={<LogoutPage/>}/>
-                <Route element={<PublicRoutes/>}>
+                <Route element={<Dashboard />}>
                     <Route path={'/'} element={<HomePage/>}/>
-                </Route>
-                <Route element={<ProtectedRoutes/>}>
-                    <Route element={<Dashboard />}>
-                        <Route path={'/subscriber'} element={<SubscriberHome/>}/>
+                    <Route element={<ProtectedRoutes/>}>
+                        <Route path={'/internal'} element={<InternalHome />}/>
                     </Route>
                 </Route>
             </Route>
@@ -43,7 +40,7 @@ const DashboardRoot = () => {
 }
 
 const CcRoot = () => {
-    const { t } = useTranslation()
+    const {t} = useTranslation()
     return (
         <Suspense fallback={<CircularProgress/>}>
             <BrowserRouter>

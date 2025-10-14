@@ -25,7 +25,7 @@ export const SideNav = ({navLinks, open, toggleOpen, smUp}) => {
                 }}
             />
             <MenuList>
-                {navLinks.map(link => (
+                {navLinks?.map(link => (
                         <MenuItem
                             key={link.id}
                             component={Link}

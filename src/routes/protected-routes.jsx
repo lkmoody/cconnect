@@ -9,5 +9,7 @@ export const ProtectedRoutes = () => {
         return <Navigate to="/login" />
     }
 
-    return <Outlet />
+    return (
+        <Outlet/>
+    )
 }

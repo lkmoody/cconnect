@@ -69,26 +69,24 @@ export const CognitoAuthProvider = ({children}) => {
         []
     )
 
-    const getSession = useCallback(
-        async () =>
-            new Promise((resolve, reject) => {
-                if(Date.now() - storedSession?.time >= 3300) {
-                    resolve(storedSession)
-                }
-                const user = UserPool.getCurrentUser()
-                if (user) {
-                    user.getSession(async (err, session) => {
-                        if (err) {
-                            reject(err)
-                        } else {
-                            dispatch({
-                                type: 'AUTHENTICATE',
-                                payload: {isAuthenticated: true, user}
-                            })
-                            resolve({...session, time: Date.now()})
-                        }
-                    })
-                } else {
+    const getSession = useCallback(() => {
+        return new Promise((resolve, reject) => {
+            const user = UserPool.getCurrentUser();
+
+            if (!user) {
+                dispatch({
+                    type: 'AUTHENTICATE',
+                    payload: {
+                        isAuthenticated: false,
+                        user: null,
+                        token: null
+                    }
+                });
+                return reject(new Error('No current user'));
+            }
+
+            user.getSession(async (err, session) => {
+                if (err || !session?.isValid()) {
                     dispatch({
                         type: 'AUTHENTICATE',
                         payload: {
@@ -96,15 +94,28 @@ export const CognitoAuthProvider = ({children}) => {
                             user: null,
                             token: null
                         }
-                    })
+                    });
+                    return reject(err || new Error('Invalid session'));
                 }
-            }),
-        [getUserAttributes]
-    )
+
+                const attributes = await getUserAttributes(user);
+                dispatch({
+                    type: 'AUTHENTICATE',
+                    payload: {
+                        isAuthenticated: true,
+                        user: { ...attributes, username: user.getUsername() },
+                        token: session.getIdToken().getJwtToken()
+                    }
+                });
+
+                resolve(session);
+            });
+        });
+    }, [getUserAttributes]);
 
     const initial = useCallback(async () => {
         try {
-            await getSession()
+            await getSession();
         } catch {
             dispatch({
                 type: 'AUTHENTICATE',
@@ -113,9 +124,9 @@ export const CognitoAuthProvider = ({children}) => {
                     user: null,
                     token: null
                 }
-            })
+            });
         }
-    }, [getSession])
+    }, [getSession]);
 
     useEffect(() => {
         initial()
@@ -202,10 +213,15 @@ export const CognitoAuthProvider = ({children}) => {
     }
 
     const getIdToken = useCallback(() => {
-        new Promise((resolve, reject) => {
-            const user = UserPool.getCurrentUser()
-        })
-    },[])
+        return new Promise((resolve, reject) => {
+            const user = UserPool.getCurrentUser();
+            if (!user) return reject('No user');
+            user.getSession((err, session) => {
+                if (err || !session.isValid()) return reject(err || 'Invalid session');
+                resolve(session.getIdToken().getJwtToken());
+            });
+        });
+    }, []);
 
     return (
         <CognitoAuthContext.Provider
@@ -217,7 +233,8 @@ export const CognitoAuthProvider = ({children}) => {
                 register,
                 logout,
                 resetPassword,
-                getSession
+                getSession,
+                getIdToken,
             }}
         >
             {children}
